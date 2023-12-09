@@ -15,7 +15,90 @@
 
   Once you've implemented the logic, test your code by running
 */
+class Calculator {
+  constructor() {
+    this.result = 0;
+  }
 
-class Calculator {}
+  add(num) {
+    this.result += num;
+  }
 
-module.exports = Calculator;
+  subtract(num) {
+    this.result -= num;
+  }
+
+  multiply(num) {
+    this.result *= num;
+  }
+
+  divide(num) {
+    if (num === 0) {
+      throw new Error("Cannot divide by zero.");
+    }
+    this.result /= num;
+  }
+
+  clear() {
+    this.result = 0;
+  }
+
+  getResult() {
+    return this.result;
+  }
+
+  calculate(expression) {
+    expression = expression.replace(/\s+/g, ""); // Remove extra spaces
+
+    // Validate the expression for invalid characters
+    if (!/^[0-9\s\+\-\*/\(\)]+$/.test(expression)) {
+      throw new Error("Invalid characters in the expression.");
+    }
+
+    const tokens = expression.match(/\d+|\+|\-|\*|\/|\(|\)/g) || [];
+
+    const performOperation = (operator, operand) => {
+      switch (operator) {
+        case "+":
+          this.add(operand);
+          break;
+        case "-":
+          this.subtract(operand);
+          break;
+        case "*":
+          this.multiply(operand);
+          break;
+        case "/":
+          this.divide(operand);
+          break;
+      }
+    };
+
+    const stack = [];
+    let currentOperator = "+";
+
+    tokens.forEach((token) => {
+      if (/\d+/.test(token)) {
+        const operand = parseFloat(token);
+        performOperation(currentOperator, operand);
+      } else if (/\+|\-|\*|\//.test(token)) {
+        currentOperator = token;
+      } else if (/\(/.test(token)) {
+        stack.push({ result: this.result, currentOperator });
+        this.clear();
+        currentOperator = "+";
+      } else if (/\)/.test(token)) {
+        const { result, currentOperator } = stack.pop();
+        performOperation(currentOperator, this.result);
+        this.result = result;
+      }
+    });
+  }
+}
+
+const cal = new Calculator();
+cal.calculate(`10 +   2 *    (   6 - (4 + 1) / 2) + 7`);
+const output = cal.getResult();
+console.log({ output }); // 19 expected 24
+
+// module.exports = Calculator;

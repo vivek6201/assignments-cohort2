@@ -5,8 +5,18 @@
   Once you've implemented the logic, test your code by running
 */
 
+function isVowel(ch){
+  const char = ch.toUpperCase();
+  return (char === "A" || char === "I" || char === "O" || char === "E" || char === "U");
+}
+
 function countVowels(str) {
-    // Your code here
+  let count = 0;
+  for(const i of str){
+    if(isVowel(i)) count++;
+  }
+
+  return count;
 }
 
 module.exports = countVowels;
